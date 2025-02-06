@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-ee2c9ba5ed1aa566e5fd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "SimpleWinHTTPServer",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "SimpleWinHTTPServer::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-SimpleWinHTTPServer-Debug-25046c3ec59abfe3d884.json",
+					"name" : "SimpleWinHTTPServer",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "SimpleWinHTTPServer_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-SimpleWinHTTPServer_autogen-Debug-e05f232200ae56ace510.json",
+					"name" : "SimpleWinHTTPServer_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "SimpleWinHTTPServer_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-SimpleWinHTTPServer_autogen_timestamp_deps-Debug-6c139f07494d99e54499.json",
+					"name" : "SimpleWinHTTPServer_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/utkua/Desktop/allthings/coding/qt/SimpleWinHTTPServer/build/Desktop_Qt_6_8_2_MinGW_64_bit-Debug",
+		"source" : "C:/Users/utkua/Desktop/allthings/coding/qt/SimpleWinHTTPServer/SimpleWinHTTPServer"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
