@@ -22,10 +22,9 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
 QT -= gui
 CONFIG += console
 CONFIG -= app_bundle
-LIBS += -lws2_32
-QT += concurrent
 
+
+LIBS += -lws2_32
