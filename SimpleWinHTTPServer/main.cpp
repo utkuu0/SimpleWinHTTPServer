@@ -1,76 +1,94 @@
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <iostream>
-#include <string>
+#include <winsock2.h>
+#include <thread>
 
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT 8080
-#define BUFFER_SIZE 4096
 
-std::string generateHttpResponse(const std::string& request) {
-    std::string response;
+void handleClient(SOCKET clientSocket) {
+    char buffer[1024] = {0};
 
-    // Sadece GET isteklerini kontrol ediyoruz
-    if (request.find("GET / ") != std::string::npos) {
-        response =
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/html\r\n"
-            "Connection: close\r\n"
-            "\r\n"
-            "<html><body><h1>HTTP Serverimize Hosgeldiniz!</h1></body></html>";
-    } else {
-        response =
-            "HTTP/1.1 404 Not Found\r\n"
-            "Content-Type: text/html\r\n"
-            "Connection: close\r\n"
-            "\r\n"
-            "<html><body><h1>404 Not Found</h1></body></html>";
+    // İstemciden veri al
+    int bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+    if (bytesReceived <= 0) {
+        closesocket(clientSocket);
+        return;
     }
 
-    return response;
+    std::cout << "Istemciden gelen istek:\n" << buffer << std::endl;
+
+    // HTTP Yanıtı
+    std::string httpResponse =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 51\r\n"
+        "\r\n"
+        "<html><body><h1>Merhaba Dunya!</h1></body></html>";
+
+    send(clientSocket, httpResponse.c_str(), httpResponse.size(), 0);
+    closesocket(clientSocket);
 }
 
 int main() {
-    WSADATA wsaData;
+    WSADATA wsa;
     SOCKET serverSocket, clientSocket;
     sockaddr_in serverAddr, clientAddr;
-    int addrLen = sizeof(clientAddr);
-    char buffer[BUFFER_SIZE];
+    int clientAddrSize = sizeof(clientAddr);
 
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    // Winsock başlat
+    if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
+        std::cerr << "WSAStartup basarisiz! Hata Kodu: " << WSAGetLastError() << std::endl;
+        return 1;
+    }
+
+    // Sunucu soketi oluştur
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket == INVALID_SOCKET) {
+        std::cerr << "Soket olusturulamadi! Hata Kodu: " << WSAGetLastError() << std::endl;
+        WSACleanup();
+        return 1;
+    }
 
+    // Sunucu adres bilgilerini ayarla
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(PORT);
 
-    bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr));
-    listen(serverSocket, SOMAXCONN);
-
-    std::cout << "HTTP Server running on port " << PORT << "...\n";
-
-    while (true) {
-        clientSocket = accept(serverSocket, (sockaddr*)&clientAddr, &addrLen);
-        if (clientSocket == INVALID_SOCKET) continue;
-
-        std::cout << "Client connected!\n";
-
-        // İstek al
-        int bytesReceived = recv(clientSocket, buffer, BUFFER_SIZE, 0);
-        if (bytesReceived > 0) {
-            buffer[bytesReceived] = '\0';
-            std::string request(buffer);
-            std::cout << "Received request:\n" << request << "\n";
-
-            // HTTP yanıtını oluştur ve gönder
-            std::string response = generateHttpResponse(request);
-            send(clientSocket, response.c_str(), response.length(), 0);
-        }
-
-        closesocket(clientSocket);
+    // Soketi belirtilen porta bağla
+    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
+        std::cerr << "Baglama basarisiz! Hata Kodu: " << WSAGetLastError() << std::endl;
+        closesocket(serverSocket);
+        WSACleanup();
+        return 1;
     }
 
+    // Dinlemeye başla
+    if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR) {
+        std::cerr << "Dinleme basarisiz! Hata Kodu: " << WSAGetLastError() << std::endl;
+        closesocket(serverSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    std::cout << "Sunucu " << PORT << " portunda dinleniyor...\n";
+
+    while (true) {
+        // Yeni istemci bağlantısını kabul et
+        clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+        if (clientSocket == INVALID_SOCKET) {
+            std::cerr << "Baglanti kabul edilemedi! Hata Kodu: " << WSAGetLastError() << std::endl;
+            continue;
+        }
+
+        std::cout << "Bir istemci baglandi!\n";
+
+        // Yeni istemciyi bir thread'e ata
+        std::thread(handleClient, clientSocket).detach();
+    }
+
+    // Kaynakları temizle
     closesocket(serverSocket);
     WSACleanup();
 
