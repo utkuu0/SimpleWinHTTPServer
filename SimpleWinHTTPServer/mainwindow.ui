@@ -14,42 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="btnStart">
+   <widget class="QTextEdit" name="textEdit">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>90</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Start Server</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="btnStop">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>150</y>
-      <width>80</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Stop Server</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="listClients">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>250</y>
-      <width>311</width>
-      <height>271</height>
+      <x>230</x>
+      <y>130</y>
+      <width>301</width>
+      <height>291</height>
      </rect>
     </property>
    </widget>
